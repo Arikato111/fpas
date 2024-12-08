@@ -6,7 +6,7 @@ authors = ["Nawasan <nawasan.dev@gmail.com>"]
 license = "MIT"
 edition = "2021"
 repository = "https://github.com/Arikato111/fpas"
-categories = ["command-line-utilities", "password"]
+categories = ["command-line-utilities"]
 
 include = ["src/"]
 
