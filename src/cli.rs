@@ -41,7 +41,7 @@ pub fn system() {
         };
         println!("{}", raw_hash);
     } else {
-        // show help 
+        // show help
         Cli::parse_from(&[std::env::args().nth(0).unwrap().as_str(), "--help"]);
     }
 }
