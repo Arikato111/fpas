@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  linux:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            target: x86_64
+          - runner: ubuntu-latest
+            target: x86
+          - runner: ubuntu-latest
+            target: aarch64
+          - runner: ubuntu-latest
+            target: armv7
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - name: Test
+        run: cargo test

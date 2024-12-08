@@ -1,0 +1,21 @@
+name: CD
+
+on:
+  release:
+    types: [published]
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - name: Publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish
