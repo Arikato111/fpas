@@ -1,0 +1,12 @@
+[package]
+name = "fpas"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+base64 = "0.22.1"
+clap = { version = "4.5.13", features = ["derive"] }
+clap_complete = { version = "4.5.23" }
+md5 = "0.7.0"
+sha1 = "0.10.6"
+sha256 = "1.5.0"
