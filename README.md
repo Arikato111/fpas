@@ -15,3 +15,9 @@ create password with text
 ```bash
 fpas your_text
 ```
+
+and loop feature
+
+```bash
+fpas -l 5 your_text
+```

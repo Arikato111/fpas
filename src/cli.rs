@@ -1,7 +1,7 @@
 use std::io;
 
-use crate::gen_pass;
-use clap::{command, CommandFactory, Parser, ValueEnum};
+use crate::gen_pass::{self, Mode};
+use clap::{command, CommandFactory, Parser};
 use clap_complete::{generate, Shell};
 
 #[derive(Parser, Default)]
@@ -14,15 +14,9 @@ struct Cli {
     #[clap(long, short)]
     /// genrate completions for any shell
     completions: Option<Shell>,
-}
-
-#[derive(Clone, Debug, Default, ValueEnum)]
-enum Mode {
-    #[default]
-    N,
-    Normal,
-    B,
-    Byte,
+    #[clap(short = 'l', long = "loop", value_name="uint32")]
+    /// Loop to generate password
+    lop: Option<u32>,
 }
 
 pub fn system() {
@@ -34,14 +28,18 @@ pub fn system() {
         return;
     }
 
-    if let Some(msg) = cli.msg {
-        let raw_hash = match cli.mode {
-            Mode::B | Mode::Byte => gen_pass::byte_mode(msg),
-            Mode::N | Mode::Normal => gen_pass::normal_mode(msg),
-        };
-        println!("{}", raw_hash);
+    let msg = if let Some(msg) = cli.msg {
+        msg
     } else {
-        // show help
-        Cli::parse_from(&[std::env::args().nth(0).unwrap().as_str(), "--help"]);
-    }
+        let mut user_input = String::new();
+        let _ = std::io::stdin().read_line(&mut user_input);
+        user_input.trim().to_string()
+    };
+    let lop = match cli.lop {
+        Some(l) => l,
+        None => 1,
+    };
+
+    let passwd = gen_pass::process(msg, cli.mode, lop);
+    print!("{}", passwd);
 }
