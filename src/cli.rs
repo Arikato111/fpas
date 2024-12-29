@@ -1,4 +1,4 @@
-use std::io;
+use std::io::{self, Read};
 
 use crate::gen_pass::{self, Mode};
 use clap::{command, CommandFactory, Parser};
@@ -14,7 +14,7 @@ struct Cli {
     #[clap(long, short)]
     /// genrate completions for any shell
     completions: Option<Shell>,
-    #[clap(short = 'l', long = "loop", value_name="uint32")]
+    #[clap(short = 'l', long = "loop", value_name = "uint32")]
     /// Loop to generate password
     lop: Option<u32>,
 }
@@ -31,9 +31,17 @@ pub fn system() {
     let msg = if let Some(msg) = cli.msg {
         msg
     } else {
-        let mut user_input = String::new();
-        let _ = std::io::stdin().read_line(&mut user_input);
-        user_input.trim().to_string()
+        let mut buf = Vec::new();
+        let stdin = std::io::stdin();
+        let mut handle = stdin.lock();
+        if let Err(err) = handle.read_to_end(&mut buf) {
+            eprintln!("Error: {}", err);
+            std::process::exit(1);
+        }
+
+        // makes user can input binary data from file.
+        // likes `cat ./file.bin | fpas`
+        unsafe { String::from_utf8_unchecked(buf) }
     };
     let lop = match cli.lop {
         Some(l) => l,
