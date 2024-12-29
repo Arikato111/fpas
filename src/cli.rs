@@ -1,4 +1,7 @@
-use std::io::{self, Read};
+use std::{
+    fs::File,
+    io::{self, Read},
+};
 
 use crate::gen_pass::{self, Mode};
 use clap::{command, CommandFactory, Parser};
@@ -7,6 +10,9 @@ use clap_complete::{generate, Shell};
 #[derive(Parser, Default)]
 #[command(name = "fpas",author, version, about, long_about = None)]
 struct Cli {
+    #[clap(short = 'f', long = "file", value_name = "file")]
+    /// Path to file for generate password
+    file: Option<String>,
     #[clap(short, long, default_value_t, value_enum)]
     /// Mode for generate password
     mode: Mode,
@@ -30,6 +36,20 @@ pub fn system() {
 
     let msg = if let Some(msg) = cli.msg {
         msg
+    } else if let Some(file) = cli.file {
+        let mut file = match File::open(file) {
+            Ok(f) => f,
+            Err(err) => {
+                eprintln!("Error Not found file: {}", err);
+                std::process::exit(1);
+            }
+        };
+        let mut buf = Vec::new();
+        if let Err(err) = file.read_to_end(&mut buf) {
+            eprintln!("Error Failed reading file: {}", err);
+            std::process::exit(1);
+        }
+        unsafe { String::from_utf8_unchecked(buf) }
     } else {
         let mut buf = Vec::new();
         let stdin = std::io::stdin();
