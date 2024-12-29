@@ -21,3 +21,9 @@ and loop feature
 ```bash
 fpas -l 5 your_text
 ```
+
+create password from binary file
+
+```bash
+cat ./file | fpas
+```
