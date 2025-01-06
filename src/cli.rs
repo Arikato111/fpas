@@ -23,6 +23,9 @@ struct Cli {
     #[clap(short = 'l', long = "loop", value_name = "uint32")]
     /// Loop to generate password
     lop: Option<u32>,
+    /// Enable chain to generate long password
+    #[clap(long, default_value_t = false, value_name = "bool")]
+    chain: bool,
 }
 
 pub fn system() {
@@ -68,6 +71,6 @@ pub fn system() {
         None => 1,
     };
 
-    let passwd = gen_pass::process(msg, cli.mode, lop);
+    let passwd = gen_pass::process(msg, cli.mode, lop, cli.chain);
     print!("{}", passwd);
 }
